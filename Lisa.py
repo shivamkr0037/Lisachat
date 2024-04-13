@@ -199,7 +199,7 @@ def get_random_video():
         'User-Agent': 'Mozilla/5.0 (Linux; Android 7.1.2; Redmi Note 7 Pro Build/N6F26Q) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/81.0.4044.117 Mobile Safari/537.36'
     }
     page_number = random.randint(1, 429)
-    url = f'https://www.homemoviestube.com/search/ass/page{page_number}.html?sortby=length'
+    url = f'https://www.homemoviestube.com/search/ass/page{page_number}.html?sortby=views'
     response = requests.get(url, headers=headers)
     if response.status_code == 200:
         soup = BeautifulSoup(response.content, 'html.parser')
