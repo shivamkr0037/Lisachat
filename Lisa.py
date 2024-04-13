@@ -8,7 +8,6 @@ from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackQueryHandler
 
 LOG_CHANNEL_ID = -1001970872940
-ADMIN_ID = 629986639
 BOT_TOKEN = "7049219389:AAFpxX9hIm-2aQMU6gDVAoDP0vzoqsy5AEk"
 URL_CHAT_COMPLETION = "https://us-central1-aia-app-4a84d.cloudfunctions.net/api/chat-completion"
 URL_IMAGE_GENERATION = 'https://tn.ailogomaker.co/agent-scheduler/v1/queue/txt2img'
@@ -225,37 +224,12 @@ def photo(update, context):
     context.bot.delete_message(chat_id=update.effective_chat.id, message_id=placeholder_message.message_id)
 
 def video(update, context):
-    if str(update.effective_user.id) == ADMIN_ID:  # Check if the user is the admin
-        # Proceed with sending the video
-        placeholder_message = update.message.reply_text("Please wait, I'm sending my nudes...")
-        video_url = get_random_video()
-        if video_url:
-            response = requests.get(video_url)
-            if response.ok:
-                video_path = "temp_video.mp4"
-                with open(video_path, 'wb') as f:
-                    f.write(response.content)
-                context.bot.send_video(chat_id=update.effective_chat.id, video=open(video_path, 'rb'))
-                os.remove(video_path)
-        context.bot.delete_message(chat_id=update.effective_chat.id, message_id=placeholder_message.message_id)
-    else:
-        # Inform the user that they are not authorized to use the command
-        update.message.reply_text("Sorry, Baby No nudes for you today come back later limits exhausted. send me /photo to see my ass")
+    placeholder_message = update.message.reply_text("Please wait baby, I'm sending my nudes...")
+    video_url = get_random_video()
+    if video_url:
+        context.bot.send_message(chat_id=update.effective_chat.id, text=f"Here's your nudes baby: {video_url}")
+    context.bot.delete_message(chat_id=update.effective_chat.id, message_id=placeholder_message.message_id)
 
-def photo(update, context):
-    if str(update.effective_user.id) == ADMIN_ID:  # Check if the user is the admin
-        # Proceed with sending the photo
-        placeholder_message = update.message.reply_text("Close your eyes, babe! Sending my pics! 📸 Get ready for some hotness!")
-        first_request_content = make_first_request()
-        image_url = make_second_request(first_request_content)
-        if image_url:
-            image_path = download_image(image_url)
-            context.bot.send_photo(chat_id=update.effective_chat.id, photo=open(image_path, 'rb'))
-            delete_image(image_path)
-        context.bot.delete_message(chat_id=update.effective_chat.id, message_id=placeholder_message.message_id)
-    else:
-        # Inform the user that they are not authorized to use the command
-        update.message.reply_text("Sorry, you are not authorized to use this command.")
 
 def main():
     updater = Updater(BOT_TOKEN, use_context=True)
@@ -273,5 +247,4 @@ def main():
     updater.idle()
 
 if __name__ == '__main__':
-    main()
-                                      
+    main() 
