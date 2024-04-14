@@ -150,7 +150,7 @@ def make_second_request(prompt_content):
         print(task_id)
 
         url = f'https://tn.ailogomaker.co/agent-scheduler/v1/task/{task_id}'
-        time.sleep(17)
+        time.sleep(20)
 
         response = requests.get(url, headers=headers)
         if response.ok:
@@ -212,8 +212,33 @@ def get_random_video():
         print('Failed to retrieve the webpage. Status code:', response.status_code)
         return None
 
+# Define a constant for the interval in seconds
+PHOTO_COMMAND_INTERVAL = 300  # 5 minutes
+
 
 def photo(update, context):
+    user_id = update.effective_user.id
+    
+    # Check if the user has used the command before
+    command_count = context.user_data.get(user_id, 0)
+    
+    # Check if the user has exceeded the command limit
+    if command_count >= 5:
+        update.message.reply_text("Sorry, you've seen my curvy body too much today cum back later👄.")
+        return
+    
+    current_time = time.time()
+    
+    # Check if the user has used the command within the interval
+    last_command_time = context.user_data.get(f"{user_id}_last_photo_time", 0)
+    if current_time - last_command_time < PHOTO_COMMAND_INTERVAL:
+        update.message.reply_text("Im shy now🙈 Wait 5minutes then you can see me again.")
+        return
+    
+    # Increment the command count and update the last command time
+    context.user_data[user_id] = command_count + 1
+    context.user_data[f"{user_id}_last_photo_time"] = current_time
+    
     placeholder_message = update.message.reply_text("Close your eyes, babe! Sending my pics! 📸 Get ready for some hotness!")
     first_request_content = make_first_request()
     image_url = make_second_request(first_request_content)
@@ -222,6 +247,7 @@ def photo(update, context):
         context.bot.send_photo(chat_id=update.effective_chat.id, photo=open(image_path, 'rb'))
         delete_image(image_path)
     context.bot.delete_message(chat_id=update.effective_chat.id, message_id=placeholder_message.message_id)
+
 
 def video(update, context):
     placeholder_message = update.message.reply_text("Please wait baby, I'm sending my nudes...")
